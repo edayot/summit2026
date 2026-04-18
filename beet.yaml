@@ -1,6 +1,6 @@
 id: model_resolver_summit
 version: 0.1.0
-
+name: model_resolver
 description: "model_resolver_summit datapack project using weld deps"
 
 output: build
@@ -31,7 +31,6 @@ meta:
   minecraft_version: "26.1.2"
 
   simple_item_plugin:
-    custom_model_data: 1430000
     generate_guide: false
     tick_function: model_resolver_summit:impl/tick
     load_function: model_resolver_summit:impl/load
@@ -44,7 +43,6 @@ meta:
   model_resolver:
     render_size: 256
     load_vanilla: true
-    save_namespace: grappling_hook
     minecraft_version: "26.1.2"
 
   smithed:

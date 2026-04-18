@@ -50,3 +50,7 @@ tag_format = "v{version}"
 [tool.semantic_release.publish]
 dist_glob_patterns = ["build/*.zip"]
 upload_to_vcs_release = true
+
+
+[tool.uv.sources]
+simple-item-plugin = { path = "../simple_item_plugin", editable = true }
