@@ -54,3 +54,4 @@ upload_to_vcs_release = true
 
 [tool.uv.sources]
 simple-item-plugin = { path = "../simple_item_plugin", editable = true }
+# weld-deps = { path = "../weld-deps", editable = true }
