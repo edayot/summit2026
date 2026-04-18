@@ -1,0 +1,1 @@
+from model_resolver_summit.plugin import beet_default

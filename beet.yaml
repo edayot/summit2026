@@ -1,0 +1,72 @@
+id: model_resolver_summit
+version: 0.1.0
+
+description: "model_resolver_summit datapack project using weld deps"
+
+output: build
+
+pipeline:
+  - simple_item_plugin
+  - model_resolver_summit
+
+require:
+  - bolt
+  - weld_deps
+  - weld_deps.contrib.mecha_auto_include.require
+
+ignore:
+  - stable_cache.json
+
+data_pack:
+  name: "{{ project_id }}_{{ project_version }}_dp_bundled"
+  load: src
+
+resource_pack:
+  name: "{{ project_id }}_{{ project_version }}_rp_bundled"
+  load: src
+
+meta:
+  mc_supports:
+    - "26.1.2"
+  minecraft_version: "26.1.2"
+
+  simple_item_plugin:
+    custom_model_data: 1430000
+    generate_guide: false
+    tick_function: model_resolver_summit:impl/tick
+    load_function: model_resolver_summit:impl/load
+
+  mecha:
+    multiline: true
+    match:
+      - "model_resolver_summit:**"
+
+  model_resolver:
+    render_size: 256
+    load_vanilla: true
+    save_namespace: grappling_hook
+    minecraft_version: "26.1.2"
+
+  smithed:
+    versioning:
+      scheduled_paths:
+        - impl/tick
+
+      lantern_load:
+        step: load
+        tag_path: load
+        function_path: impl/test_load
+
+      refactor:
+        match: "{{ project_id }}:*"
+        find: "{{ project_id }}:impl/"
+        replace: "{{ project_id }}:v{{ project_version }}/"
+
+      api:
+        match: "{{ project_id }}:v{{ project_version }}"
+        implementation_prefix: "{{ project_id }}:v{{ project_version }}/"
+        version_check_path: "v{{ project_version }}/calls"
+        tag_path: calls
+
+  weld_deps:
+    merge_with_weld: false
