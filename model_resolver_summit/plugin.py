@@ -107,8 +107,9 @@ def beet_default(ctx: Context):
         base_item="furnace",
         item_name=(f"{NAMESPACE}:screen", {Lang.en_us: "Screen"}),
         block_properties=BlockProperties(
-            base_block="minecraft:barrier",
+            base_block="minecraft:air",
             entity_type="item_display",
+            destroy_code=False
         ),
     ).export(ctx)
 

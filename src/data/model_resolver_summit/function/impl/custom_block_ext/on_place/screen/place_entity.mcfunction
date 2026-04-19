@@ -1,6 +1,9 @@
 
 from beet.contrib.messages import Message
 
+
+fill ^3 ^2 ^ ^-3 ^-1 ^ oxidized_copper_bars replace air
+
 data merge entity @s {transformation: {scale: [2.001f, 2.001f, 2.001f]}}
 data merge entity @s {brightness:{block:15, sky:15}}
 
@@ -26,3 +29,5 @@ execute summon text_display run function ./place_text_display_code:
     data merge entity @s {transformation: {scale: [0.6, 0.6, 0.6]}}
     tp @s ~ ~ ~ ~ ~
     execute at @s run tp @s ^-1.1 ^-0.2 ^0.1
+
+
