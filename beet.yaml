@@ -10,6 +10,7 @@ pipeline:
   - model_resolver_summit
 
 require:
+  - mecha.contrib.messages
   - bolt
   - weld_deps.contrib.mecha_auto_include.require
 
@@ -23,6 +24,7 @@ data_pack:
 resource_pack:
   name: "{{ project_id }}_{{ project_version }}_rp_bundled"
   load: src
+  zipped: true
 
 meta:
   mc_supports:

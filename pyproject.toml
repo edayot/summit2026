@@ -12,6 +12,7 @@ dependencies = [
     "weld-deps>=0.15.0",
     "requests>=2.32.0",
     "pyyaml>=6.0.0",
+    "model-resolver>=1.15.2",
 ]
 
 [dependency-groups]
@@ -54,4 +55,5 @@ upload_to_vcs_release = true
 
 [tool.uv.sources]
 simple-item-plugin = { path = "../simple_item_plugin", editable = true }
+model-resolver = { path = "../model_resolver", editable = true }
 # weld-deps = { path = "../weld-deps", editable = true }
