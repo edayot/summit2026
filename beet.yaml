@@ -10,6 +10,7 @@ pipeline:
   - model_resolver_summit
 
 require:
+  - model_resolver_summit.compress
   - mecha.contrib.messages
   - bolt
   - weld_deps.contrib.mecha_auto_include.require
@@ -20,6 +21,7 @@ ignore:
 data_pack:
   name: "{{ project_id }}_{{ project_version }}_dp_bundled"
   load: src
+  zipped: true
 
 resource_pack:
   name: "{{ project_id }}_{{ project_version }}_rp_bundled"
