@@ -6,7 +6,7 @@ from pygments.styles import get_style_by_name
 from pygments.token import Token
 
 
-def tokenize_code(code: str, style_name: str = "monokai") -> list[dict]:
+def tokenize_code(code: str, style_name: str = "material") -> list[dict]:
     """
     Tokenizes a Python code string and returns a list of
     {text, color, bold, italic} dicts ready for UI rendering.
@@ -23,7 +23,7 @@ def tokenize_code(code: str, style_name: str = "monokai") -> list[dict]:
     default_color = (
         f"#{style.style_for_token(Token)['color']}"
         if style.style_for_token(Token)["color"]
-        else None
+        else "#000000"
     )
 
     tokens: list[dict[str, Any]] = []
