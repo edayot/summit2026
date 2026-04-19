@@ -1,3 +1,5 @@
+from typing import NamedTuple
+
 from beet import Context, Font, Texture
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
@@ -9,6 +11,13 @@ from beet.contrib.messages import Message
 from model_resolver.render import Render
 from model_resolver.tasks.model import AnimatedResultTask
 from PIL import Image
+import json
+
+class AnimationChar(NamedTuple):
+    height_small: str
+    height_big: str
+
+
 
 
 
@@ -28,38 +37,67 @@ def create_animation_text(ctx: Context, id: str):
     }
     font_path = f"{NAMESPACE}:font"
 
-    text: list[JsonDict | str] = [""]
 
     char_index = 0xe000
     char_offset = 0x0004
+
+    char_map: list[AnimationChar] = []
+
     for i, t in enumerate(task.tasks):
         assert isinstance(t.saved_img, Image.Image)
         char_index += char_offset
-        char_item = f"\\u{char_index:04x}".encode().decode("unicode_escape")
+        
 
         render_path = f"{NAMESPACE}:item/font/{id}/{i}"
         ctx.assets.textures[render_path] = Texture(t.saved_img)
 
+        char_small = f"\\u{char_index:04x}".encode().decode("unicode_escape")
         font["providers"].append({
             "type": "bitmap",
             "file": f"{render_path}.png",
             "ascent": 8,
             "height": 16,
-            "chars": [char_item],
+            "chars": [char_small],
         })
+        char_big = f"\\u{char_index+1:04x}".encode().decode("unicode_escape")
+        font["providers"].append({
+            "type": "bitmap",
+            "file": f"{render_path}.png",
+            "ascent": 8,
+            "height": 32,
+            "chars": [char_big],
+        })
+        char_map.append(AnimationChar(char_small, char_big))
+    
+    text: list[JsonDict | str] = [""]    
+    for i, (char_small, char_big) in enumerate(char_map):
         text.append({
-            "text": char_item + " ",
+            "text": char_small + " ",
             "font": font_path,
             "color": "white",
         })
         n = 4
         if i%n == n-1:
             text.append("\n\n")
-
         
     ctx.assets.fonts[font_path] = Font(font)
 
     ctx.data[Message][f"{NAMESPACE}:{id}"] = Message(text)
+
+
+    code = f"""\
+from beet import Context
+
+def beet_default(ctx: Context):
+    render = Render(ctx)
+    task = render.add_model_task(
+        {json.dumps(path)}, 
+        path_ctx="example:item/{id}"
+    )
+    render.run()
+"""
+    ctx.data[Message][f"{NAMESPACE}:{id}/code"] = Message({"text":code})
+
 
 
 

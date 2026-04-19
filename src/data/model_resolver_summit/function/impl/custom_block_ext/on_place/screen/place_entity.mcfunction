@@ -3,8 +3,24 @@ from beet.contrib.messages import Message
 
 data merge entity @s {transformation: {scale: [2.001f, 2.001f, 2.001f]}}
 
+scoreboard players add #GLOBAL_SCREEN model_resolver_summit.math 1
+scoreboard players operation @s model_resolver_summit.math = #GLOBAL_SCREEN model_resolver_summit.math
+
+
 execute summon text_display run function ./place_text_display: 
+    scoreboard players operation @s model_resolver_summit.math = #GLOBAL_SCREEN model_resolver_summit.math
 
     text = ctx.data[Message]["model_resolver_summit:sculk_sensor"].data
     data merge entity @s {Tags:["model_resolver_summit.screen.text_display"], text: text, line_width: 500, background: 0}
-    tp @s ~ ~-0.8 ~ ~ ~
+    tp @s ~ ~ ~ ~ ~
+    execute at @s run tp @s ^1.8 ^-0.6 ^
+
+execute summon text_display run function ./place_text_display_code: 
+    scoreboard players operation @s model_resolver_summit.math = #GLOBAL_SCREEN model_resolver_summit.math
+
+    text = ctx.data[Message]["model_resolver_summit:sculk_sensor/code"].data
+
+    data merge entity @s {Tags:["model_resolver_summit.screen.text_display", "model_resolver_summit.screen.code"], text: text, line_width: 500, background: 0, alignment:"left"}
+    data merge entity @s {transformation: {scale: [0.6, 0.6, 0.6]}}
+    tp @s ~ ~ ~ ~ ~
+    execute at @s run tp @s ^-1.1 ^-0.2 ^

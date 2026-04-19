@@ -1,0 +1,26 @@
+{
+    "condition": "minecraft:entity_scores",
+    "entity": "this",
+    "scores": {
+        "model_resolver_summit.math": {
+            "min": {
+                "type": "minecraft:score",
+                "target": {
+                    "type": "minecraft:fixed",
+                    "name": "#SEARCH_ID"
+                },
+                "score": "model_resolver_summit.math",
+                "scale": 1
+            },
+            "max": {
+                "type": "minecraft:score",
+                "target": {
+                    "type": "minecraft:fixed",
+                    "name": "#SEARCH_ID"
+                },
+                "score": "model_resolver_summit.math",
+                "scale": 1
+            }
+        }
+    }
+}
