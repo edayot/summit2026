@@ -13,12 +13,12 @@ from model_resolver.tasks.model import AnimatedResultTask
 from PIL import Image
 import json
 
+from model_resolver_summit.code_style import tokenize_code
+
+
 class AnimationChar(NamedTuple):
     height_small: str
     height_big: str
-
-
-
 
 
 def create_animation_text(ctx: Context, id: str):
@@ -28,17 +28,11 @@ def create_animation_text(ctx: Context, id: str):
     render.run()
 
     font: JsonDict = {
-        "providers": [
-            {
-                "type": "reference",
-                "id": "minecraft:include/space"
-            }
-        ]
+        "providers": [{"type": "reference", "id": "minecraft:include/space"}]
     }
     font_path = f"{NAMESPACE}:font"
 
-
-    char_index = 0xe000
+    char_index = 0xE000
     char_offset = 0x0004
 
     char_map: list[AnimationChar] = []
@@ -46,44 +40,48 @@ def create_animation_text(ctx: Context, id: str):
     for i, t in enumerate(task.tasks):
         assert isinstance(t.saved_img, Image.Image)
         char_index += char_offset
-        
 
         render_path = f"{NAMESPACE}:item/font/{id}/{i}"
         ctx.assets.textures[render_path] = Texture(t.saved_img)
 
         char_small = f"\\u{char_index:04x}".encode().decode("unicode_escape")
-        font["providers"].append({
-            "type": "bitmap",
-            "file": f"{render_path}.png",
-            "ascent": 8,
-            "height": 16,
-            "chars": [char_small],
-        })
+        font["providers"].append(
+            {
+                "type": "bitmap",
+                "file": f"{render_path}.png",
+                "ascent": 8,
+                "height": 16,
+                "chars": [char_small],
+            }
+        )
         char_big = f"\\u{char_index+1:04x}".encode().decode("unicode_escape")
-        font["providers"].append({
-            "type": "bitmap",
-            "file": f"{render_path}.png",
-            "ascent": 8,
-            "height": 32,
-            "chars": [char_big],
-        })
+        font["providers"].append(
+            {
+                "type": "bitmap",
+                "file": f"{render_path}.png",
+                "ascent": 8,
+                "height": 32,
+                "chars": [char_big],
+            }
+        )
         char_map.append(AnimationChar(char_small, char_big))
-    
-    text: list[JsonDict | str] = [""]    
+
+    text: list[JsonDict | str] = [""]
     for i, (char_small, char_big) in enumerate(char_map):
-        text.append({
-            "text": char_small + " ",
-            "font": font_path,
-            "color": "white",
-        })
+        text.append(
+            {
+                "text": char_small + " ",
+                "font": font_path,
+                "color": "white",
+            }
+        )
         n = 4
-        if i%n == n-1:
+        if i % n == n - 1:
             text.append("\n\n")
-        
+
     ctx.assets.fonts[font_path] = Font(font)
 
     ctx.data[Message][f"{NAMESPACE}:{id}"] = Message(text)
-
 
     code = f"""\
 from beet import Context
@@ -96,17 +94,16 @@ def beet_default(ctx: Context):
     )
     render.run()
 """
-    ctx.data[Message][f"{NAMESPACE}:{id}/code"] = Message({"text":code})
-
-
+    ctx.data[Message][f"{NAMESPACE}:{id}/code"] = Message(tokenize_code(code))
 
 
 def beet_default(ctx: Context):
-    beet_item = Item(id="beet", item_name=(f"{NAMESPACE}:beet", {Lang.en_us: "Beet Item"})).export(ctx)
-
+    beet_item = Item(
+        id="beet", item_name=(f"{NAMESPACE}:beet", {Lang.en_us: "Beet Item"})
+    ).export(ctx)
 
     screen = Item(
-        id="screen", 
+        id="screen",
         base_item="furnace",
         item_name=(f"{NAMESPACE}:screen", {Lang.en_us: "Screen"}),
         block_properties=BlockProperties(
@@ -116,4 +113,3 @@ def beet_default(ctx: Context):
     ).export(ctx)
 
     create_animation_text(ctx, "sculk_sensor")
-
