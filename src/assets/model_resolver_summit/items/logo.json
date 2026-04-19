@@ -1,0 +1,187 @@
+{
+	"model": {
+		"type": "composite",
+		"models": [
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/0"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/1"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/2"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/3"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/4"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/5"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/6"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/7"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/8"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/9"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/10"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/11"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/12"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/13"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/14"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/15"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/16"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/17"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/18"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/19"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/20"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/21"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/22"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/23"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/24"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/25"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/26"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/27"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/28"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/29"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/30"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/31"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/32"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/33"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/34"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/35"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/36"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/37"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/38"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/39"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/40"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/41"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/42"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/43"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo/44"
+			}
+		]
+	}
+}
