@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from beet import Context, Font, Texture
+from beet import Context, Font, Function, Texture
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
@@ -21,7 +21,7 @@ class AnimationChar(NamedTuple):
     height_big: str
 
 
-def create_animation_text(ctx: Context, id: str):
+def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
     path = f"minecraft:block/{id}"
     render = Render(ctx, default_render_size=256)
     task = render.add_model_task(path)
@@ -30,7 +30,7 @@ def create_animation_text(ctx: Context, id: str):
     font: JsonDict = {
         "providers": [{"type": "reference", "id": "minecraft:include/space"}]
     }
-    font_path = f"{NAMESPACE}:font"
+    font_path = f"{NAMESPACE}:font/{id}"
 
     char_index = 0xE000
     char_offset = 0x0004
@@ -66,22 +66,19 @@ def create_animation_text(ctx: Context, id: str):
         )
         char_map.append(AnimationChar(char_small, char_big))
 
-    text: list[JsonDict | str] = [""]
+    text_images: list[JsonDict | str] = [""]
     for i, (char_small, char_big) in enumerate(char_map):
-        text.append(
+        text_images.append(
             {
                 "text": char_small + " ",
                 "font": font_path,
                 "color": "white",
             }
         )
-        n = 4
         if i % n == n - 1:
-            text.append("\n\n")
+            text_images.append("\n\n")
 
     ctx.assets.fonts[font_path] = Font(font)
-
-    ctx.data[Message][f"{NAMESPACE}:{id}"] = Message(text)
 
     code = f"""\
 from beet import Context
@@ -94,7 +91,20 @@ def beet_default(ctx: Context):
     )
     render.run()
 """
-    ctx.data[Message][f"{NAMESPACE}:{id}/code"] = Message(tokenize_code(code))
+    message_code = tokenize_code(code)
+
+
+    ctx.data.functions[f"{NAMESPACE}:impl/set_screen_display/{id}"] = Function(f"""\
+function ~/set_message_code:
+    data modify entity @s text set value {json.dumps(message_code)}
+function ~/set_message_image:
+    data modify entity @s text set value {json.dumps(text_images)}
+    data merge entity @s {{transformation: {{scale: [{scale}, {scale}, {scale}]}}}}
+execute if entity @s[tag=model_resolver_summit.screen.code] run return run function ~/set_message_code
+execute if entity @s[tag=model_resolver_summit.screen.image] run return run function ~/set_message_image
+execute as @n[tag=model_resolver_summit.screen.code, distance=..10] run function ~/set_message_code
+execute as @n[tag=model_resolver_summit.screen.image, distance=..10] run function ~/set_message_image
+""")
 
 
 def beet_default(ctx: Context):
@@ -114,3 +124,5 @@ def beet_default(ctx: Context):
     ).export(ctx)
 
     create_animation_text(ctx, "sculk_sensor")
+    create_animation_text(ctx, "campfire", 8, 0.5)
+    create_animation_text(ctx, "warped_hyphae", 6, 0.75)
