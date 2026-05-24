@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from beet import Context, Font, Function, Texture
+from beet import Context, Font, Function, Generator, Texture
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
@@ -21,9 +21,9 @@ class AnimationChar(NamedTuple):
     height_big: str
 
 
-def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
+def create_animation_text(ctx: Generator, id: str, n=4, scale: float = 1):
     path = f"minecraft:block/{id}"
-    render = Render(ctx, default_render_size=256)
+    render = Render(ctx.ctx, default_render_size=256)
     task = render.add_model_task(path)
     render.run()
 
@@ -108,10 +108,6 @@ execute as @n[tag=model_resolver_summit.screen.image, distance=..10] run functio
 
 
 def beet_default(ctx: Context):
-    beet_item = Item(
-        id="beet", item_name=(f"{NAMESPACE}:beet", {Lang.en_us: "Beet Item"})
-    ).export(ctx)
-
     screen = Item(
         id="screen",
         base_item="furnace",
@@ -123,6 +119,8 @@ def beet_default(ctx: Context):
         ),
     ).export(ctx)
 
-    create_animation_text(ctx, "sculk_sensor")
-    create_animation_text(ctx, "campfire", 8, 0.5)
-    create_animation_text(ctx, "warped_hyphae", 6, 0.75)
+    with ctx.generate.draft() as draft:
+        draft.cache("guide", "guide")
+        create_animation_text(draft, "sculk_sensor")
+        create_animation_text(draft, "campfire", 8, 0.5)
+        create_animation_text(draft, "warped_hyphae", 6, 0.75)
