@@ -5,6 +5,7 @@ from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
 from simple_item_plugin.crafting import ShapedRecipe, VanillaItem
+from model_resolver.minecraft_model import DisplayOptionModel
 
 from beet.contrib.messages import Message
 
@@ -105,7 +106,70 @@ execute if entity @s[tag=model_resolver_summit.screen.image] run return run func
 execute as @n[tag=model_resolver_summit.screen.code, distance=..10] run function ~/set_message_code
 execute as @n[tag=model_resolver_summit.screen.image, distance=..10] run function ~/set_message_image
 """)
+    
 
+def structure_generation_code(ctx: Context):
+
+    font: JsonDict = {
+        "providers": [{"type": "reference", "id": "minecraft:include/space"}]
+    }
+    font_path = f"{NAMESPACE}:font/structure"
+
+    STRUCTURE_COOR = "186 86 -6"
+
+    func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/200tick", Function("""
+schedule function ~/ 200t replace
+scoreboard players add #GLOBAL_STRUCTURE model_resolver_summit.math 1
+fill 186 86 -6 192 91 0 air strict
+"""))
+    n = 0
+
+    char_index = 0xE000
+    char_offset = 0x0004
+
+    render = Render(ctx, default_render_size=256)
+    for structure in ctx.data.structures.match("model_resolver_summit:*"):
+        n += 1
+        char_index += char_offset
+        char_structure = f"\\u{char_index:04x}".encode().decode("unicode_escape")
+
+        render_path = f"{NAMESPACE}:item/font/structure/{n}"
+        render.add_structure_task(
+            structure, path_ctx=render_path, animation_mode="one_file",
+            display_option=DisplayOptionModel(
+                scale=(1.5, 1.5, 1.5),
+                rotation=(30, 225, 0),
+                translation=(-16, 32, 0),
+            )
+        )
+        font["providers"].append(
+            {
+                "type": "bitmap",
+                "file": f"{render_path}.png",
+                "ascent": 8,
+                "height": 16,
+                "chars": [char_structure],
+            }
+        )
+        text = ["", {"text": char_structure, "font": font_path, "color": "white"}]
+
+        func.append(f"""
+execute 
+    if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}
+    run function ~/place_structure_{n}:
+        place template {structure} {STRUCTURE_COOR}
+        data modify entity @n[tag=model_resolver_summit.structure, type=text_display] text set value {json.dumps(text)}
+""")
+
+
+    func.append(f"""
+execute 
+    if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}.. 
+    run scoreboard players set #GLOBAL_STRUCTURE model_resolver_summit.math 0
+""")
+    render.run()
+
+    ctx.assets.fonts[font_path] = Font(font)
 
 def beet_default(ctx: Context):
     screen = Item(
@@ -124,3 +188,5 @@ def beet_default(ctx: Context):
         create_animation_text(draft, "sculk_sensor")
         create_animation_text(draft, "campfire", 8, 0.5)
         create_animation_text(draft, "warped_hyphae", 6, 0.75)
+
+    structure_generation_code(ctx)
