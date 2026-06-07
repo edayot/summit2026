@@ -117,48 +117,86 @@ def structure_generation_code(ctx: Context):
 
     STRUCTURE_COOR = "186 86 -6"
 
-    func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/200tick", Function("""
-schedule function ~/ 200t replace
+    func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/loop_structure", Function("""
+schedule function ~/ 100t replace
 scoreboard players add #GLOBAL_STRUCTURE model_resolver_summit.math 1
 fill 186 86 -6 192 91 0 air strict
 """))
     n = 0
 
     char_index = 0xE000
-    char_offset = 0x0004
+    char_offset = 0x0005
 
     render = Render(ctx, default_render_size=256)
     for structure in ctx.data.structures.match("model_resolver_summit:*"):
         n += 1
         char_index += char_offset
-        char_structure = f"\\u{char_index:04x}".encode().decode("unicode_escape")
 
-        render_path = f"{NAMESPACE}:item/font/structure/{n}"
-        render.add_structure_task(
-            structure, path_ctx=render_path, animation_mode="one_file",
-            display_option=DisplayOptionModel(
-                scale=(1.5, 1.5, 1.5),
-                rotation=(30, 225, 0),
-                translation=(-16, 32, 0),
+        configs = [
+            (
+                "iso", 
+                f"\\u{char_index:04x}".encode().decode("unicode_escape"), 
+                DisplayOptionModel(
+                    scale=(1.5, 1.5, 1.5),
+                    rotation=(30, 225, 0),
+                    translation=(-16, 32, 0),
+                ),
+            ),
+            (
+                "front", 
+                f"\\u{char_index+1:04x}".encode().decode("unicode_escape"), 
+                DisplayOptionModel(
+                    scale=(1.5, 1.5, 1.5),
+                    rotation=(0, -90, 0),
+                    translation=(-16, 32, 0),
+                ),
+            ),
+            (
+                "top", 
+                f"\\u{char_index+2:04x}".encode().decode("unicode_escape"), 
+                DisplayOptionModel(
+                    scale=(1.5, 1.5, 1.5),
+                    rotation=(90, 270, 0),
+                    translation=(-16, 32, 0),
+                ),
+            ),
+            (
+                "left", 
+                f"\\u{char_index+3:04x}".encode().decode("unicode_escape"), 
+                DisplayOptionModel(
+                    scale=(1.5, 1.5, 1.5),
+                    rotation=(0, 0, 0),
+                    translation=(-16, 32, 0),
+                ),
+            ),
+        ]
+
+        commands = []
+
+        for suffix, char, display_option in configs:
+            render_path = f"{NAMESPACE}:item/font/structure/{n}_{suffix}"
+            render.add_structure_task(
+                structure, path_ctx=render_path, animation_mode="one_file",
+                display_option=display_option,
             )
-        )
-        font["providers"].append(
-            {
-                "type": "bitmap",
-                "file": f"{render_path}.png",
-                "ascent": 8,
-                "height": 16,
-                "chars": [char_structure],
-            }
-        )
-        text = ["", {"text": char_structure, "font": font_path, "color": "white"}]
+            font["providers"].append(
+                {
+                    "type": "bitmap",
+                    "file": f"{render_path}.png",
+                    "ascent": 8,
+                    "height": 16,
+                    "chars": [char],
+                }
+            )
+            commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.{suffix}, type=text_display] text set value {json.dumps({'text': char, 'font': font_path, 'color': 'white'})}")
+        
 
         func.append(f"""
 execute 
     if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}
     run function ~/place_structure_{n}:
         place template {structure} {STRUCTURE_COOR}
-        data modify entity @n[tag=model_resolver_summit.structure, type=text_display] text set value {json.dumps(text)}
+        {"\n        ".join(commands)}
 """)
 
 
