@@ -4,13 +4,9 @@ from beet import Context, Font, Function, Generator, Texture
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
-from simple_item_plugin.crafting import ShapedRecipe, VanillaItem
 from model_resolver.minecraft_model import DisplayOptionModel
 
-from beet.contrib.messages import Message
-
 from model_resolver.render import Render
-from model_resolver.tasks.model import AnimatedResultTask
 from PIL import Image
 import json
 
@@ -119,7 +115,6 @@ def structure_generation_code(ctx: Context):
 
     func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/loop_structure", Function("""
 schedule function ~/ 100t replace
-scoreboard players add #GLOBAL_STRUCTURE model_resolver_summit.math 1
 fill 186 86 -6 192 91 0 air strict
 """))
     n = 0
@@ -128,7 +123,21 @@ fill 186 86 -6 192 91 0 air strict
     char_offset = 0x0005
 
     render = Render(ctx, default_render_size=256)
-    for structure in ctx.data.structures.match("model_resolver_summit:*"):
+    for structure in sorted(ctx.data.structures.match("model_resolver_summit:*")):
+
+        code = f"""\
+from beet import Context
+
+def beet_default(ctx: Context):
+    render = Render(ctx)
+    render.add_structure_task(
+        {json.dumps(structure)}, 
+        path_ctx={json.dumps(structure)}
+    )
+    render.run()
+"""
+        message_code = tokenize_code(code)
+
         n += 1
         char_index += char_offset
 
@@ -172,6 +181,7 @@ fill 186 86 -6 192 91 0 air strict
         ]
 
         commands = []
+        commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.code, type=text_display] text set value {json.dumps(message_code)}")
 
         for suffix, char, display_option in configs:
             render_path = f"{NAMESPACE}:item/font/structure/{n}_{suffix}"
@@ -200,10 +210,11 @@ execute
 """)
 
 
-    func.append(f"""
+    func.prepend(f"""
+scoreboard players add #GLOBAL_STRUCTURE model_resolver_summit.math 1
 execute 
-    if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}.. 
-    run scoreboard players set #GLOBAL_STRUCTURE model_resolver_summit.math 0
+    if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n+1}.. 
+    run scoreboard players set #GLOBAL_STRUCTURE model_resolver_summit.math 1
 """)
     render.run()
 
