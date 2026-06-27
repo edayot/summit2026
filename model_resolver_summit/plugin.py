@@ -125,7 +125,7 @@ fill 186 86 -6 192 91 0 air strict
 
     tasks: dict[str, StructureRenderTask] = {}
     render = Render(draft.ctx, default_render_size=256)
-    for structure in sorted(draft.data.structures.match("model_resolver_summit:*")):
+    for structure in sorted(draft.ctx.data.structures.match("model_resolver_summit:*")):
 
         code = f"""\
 from beet import Context
