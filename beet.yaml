@@ -8,6 +8,7 @@ output: build
 pipeline:
   - simple_item_plugin
   - model_resolver_summit
+  - mecha
 
 require:
   - model_resolver_summit.compress

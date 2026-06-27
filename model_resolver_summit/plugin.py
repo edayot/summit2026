@@ -91,7 +91,9 @@ def beet_default(ctx: Context):
     message_code = tokenize_code(code)
 
 
-    ctx.data.functions[f"{NAMESPACE}:impl/set_screen_display/{id}"] = Function(f"""\
+    res = f"{NAMESPACE}:impl/set_screen_display/{id}"
+
+    ctx.data.functions[res] = Function(f"""\
 function ~/set_message_code:
     data modify entity @s text set value {json.dumps(message_code)}
 function ~/set_message_image:
@@ -99,9 +101,8 @@ function ~/set_message_image:
     data merge entity @s {{transformation: {{scale: [{scale}, {scale}, {scale}]}}}}
 execute if entity @s[tag=model_resolver_summit.screen.code] run return run function ~/set_message_code
 execute if entity @s[tag=model_resolver_summit.screen.image] run return run function ~/set_message_image
-execute as @n[tag=model_resolver_summit.screen.code, distance=..10] run function ~/set_message_code
-execute as @n[tag=model_resolver_summit.screen.image, distance=..10] run function ~/set_message_image
 """)
+    return res
     
 
 def structure_generation_code(ctx: Context):
@@ -233,9 +234,31 @@ def beet_default(ctx: Context):
     ).export(ctx)
 
     with ctx.generate.draft() as draft:
-        draft.cache("guide", "guide")
-        create_animation_text(draft, "sculk_sensor")
-        create_animation_text(draft, "campfire", 8, 0.5)
-        create_animation_text(draft, "warped_hyphae", 6, 0.75)
+        # draft.cache("renders", "renders")
+
+
+        renders_animated = [
+            ("sculk_sensor", 4, 1),
+            ("campfire", 8, 0.5),
+            ("warped_hyphae", 7, 0.6),
+            ("magma_block", 4, 0.75),
+            ("soul_campfire", 8, 0.5),
+            ("crimson_stem", 7, 0.6),
+            ("command_block", 6, 0.7),
+            ("sculk_shrieker", 8, 0.5),
+            ("sculk", 8, 0.5),
+        ]
+        
+        
+        i = 0
+        func = draft.data.functions.setdefault(f"{NAMESPACE}:impl/screen_reparts", Function("""
+scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_resolver_summit.math
+"""))
+        for x, y, z in renders_animated:
+            res = create_animation_text(draft, x, y, z)
+            func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..4, predicate=model_resolver_summit:impl/search_id] run function {res}")
+            i += 1
+        draft.data.functions.setdefault(f"{NAMESPACE}:impl/load", Function("")).append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
+
 
     structure_generation_code(ctx)
