@@ -24,7 +24,7 @@ execute summon text_display run function ./place_text_display_code:
     data merge entity @s {Tags:["model_resolver_summit.screen.text_display", "model_resolver_summit.screen.code", "summit.dynamic"], text: "", line_width: 500, background: -15198184, alignment:"left"}
     tag @s add model_resolver_summit.screen.part
     function model_resolver_summit:impl/set_screen_display/sculk_sensor
-    data merge entity @s {transformation: {scale: [0.6, 0.6, 0.6]}}
+    data merge entity @s {transformation: {scale: [0.45, 0.45, 0.45]}}
     tp @s ~ ~ ~ ~ ~
     execute at @s run tp @s ^-1.1 ^-0.2 ^0.025
 

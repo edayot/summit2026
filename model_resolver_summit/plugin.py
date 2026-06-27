@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from beet import Context, Font, Function, Generator, Texture
+from beet import Context, Font, Function, Texture
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
@@ -20,7 +20,7 @@ class AnimationChar(NamedTuple):
 
 def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
     path = f"minecraft:block/{id}"
-    render = Render(ctx, default_render_size=256)
+    render = Render(ctx, default_render_size=64)
     task = render.add_model_task(path)
     render.run()
 
@@ -79,7 +79,7 @@ def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
 
     code = f"""\
 from beet import Context
-
+                                                                          
 def beet_default(ctx: Context):
     render = Render(ctx)
     task = render.add_model_task(
@@ -238,14 +238,19 @@ def beet_default(ctx: Context):
 
     renders_animated = [
         ("sculk_sensor", 4, 1),
-        ("campfire", 8, 0.5),
-        ("warped_hyphae", 7, 0.6),
-        ("magma_block", 4, 0.75),
-        ("soul_campfire", 8, 0.5),
-        ("crimson_stem", 7, 0.6),
-        ("command_block", 6, 0.7),
         ("sculk_shrieker", 8, 0.5),
         ("sculk", 8, 0.5),
+        ("campfire", 8, 0.5),
+        ("soul_campfire", 8, 0.5),
+        ("warped_hyphae", 7, 0.6),
+        ("crimson_stem", 7, 0.6),
+        ("magma_block", 4, 0.75),
+        ("respawn_anchor_2", 6, 0.7),
+        ("command_block", 6, 0.7),
+        ("chain_command_block", 6, 0.7),
+        ("repeating_command_block", 6, 0.7),
+        ("seagrass", 4, 0.75),
+        ("kelp", 4, 0.75),
     ]
     
     
@@ -255,7 +260,7 @@ scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_re
 """))
     for x, y, z in renders_animated:
         res = create_animation_text(ctx, x, y, z)
-        func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..4, predicate=model_resolver_summit:impl/search_id] run function {res}")
+        func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..16, predicate=model_resolver_summit:impl/search_id] run function {res}")
         i += 1
     ctx.data.functions.setdefault(f"{NAMESPACE}:impl/load", Function("")).append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
 

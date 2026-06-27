@@ -8,7 +8,6 @@ output: build
 pipeline:
   - simple_item_plugin
   - model_resolver_summit
-  - mecha
 
 require:
   - model_resolver_summit.compress
@@ -30,6 +29,8 @@ resource_pack:
   load: 
     - src
     - simpledrawer
+
+  zipped: true
 
 meta:
   mc_supports:
