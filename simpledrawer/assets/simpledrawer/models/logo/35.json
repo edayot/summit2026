@@ -1,0 +1,36 @@
+{
+	"textures": {
+		"1": "simpledrawer:item/banner"
+	},
+	"elements": [
+		{
+			"from": [6.95, 6.25, 7.3],
+			"to": [9.05, 9.75, 8.7],
+			"faces": {
+				"north": {
+					"uv": [5.504, 1.1, 5.888, 3.1],
+					"texture": "#1"
+				},
+				"south": {
+					"uv": [5.888, 1.1, 5.504, 3.1],
+					"texture": "#1"
+				},
+				"up": {
+					"uv": [5.888, 1.1, 5.504, 0],
+					"texture": "#1"
+				},
+				"down": {
+					"uv": [5.888, 4.2, 5.504, 3.1],
+					"texture": "#1"
+				}
+			}
+		}
+	],
+	"display": {
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [-16.1, 46.3, -8.5],
+			"scale": [4, 4, 4]
+		}
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"textures": {
+		"0": "simpledrawer:item/drawer"
+	},
+	"elements": [
+		{
+			"from": [4.5, 3, 5.25],
+			"to": [11.5, 13, 10.75],
+			"faces": {
+				"north": {
+					"uv": [8.8, 1.1, 9.248, 3.1],
+					"texture": "#0"
+				},
+				"south": {
+					"uv": [9.248, 1.1, 8.8, 3.1],
+					"texture": "#0"
+				},
+				"up": {
+					"uv": [9.248, 1.1, 8.8, 0],
+					"texture": "#0"
+				},
+				"down": {
+					"uv": [9.248, 4.2, 8.8, 3.1],
+					"texture": "#0"
+				}
+			}
+		}
+	],
+	"display": {
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [54, 14, 0],
+			"scale": [4, 4, 4]
+		}
+	}
+}

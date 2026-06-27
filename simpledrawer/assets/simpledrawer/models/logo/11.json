@@ -1,0 +1,28 @@
+{
+	"textures": {
+		"0": "simpledrawer:item/drawer"
+	},
+	"elements": [
+		{
+			"from": [7.5, 7, 4.75],
+			"to": [8.5, 9, 11.25],
+			"faces": {
+				"west": {
+					"uv": [0, 13.3, 0.016, 13.35],
+					"texture": "#0"
+				},
+				"up": {
+					"uv": [0, 13.3, 0.016, 13.35],
+					"texture": "#0"
+				}
+			}
+		}
+	],
+	"display": {
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [4, -4, 0],
+			"scale": [4, 4, 4]
+		}
+	}
+}
