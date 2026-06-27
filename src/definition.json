@@ -1,0 +1,26 @@
+{
+    "namespace": "model_resolver_summit",
+    "booth_name": "Model Resolver",
+    "bounding_boxes": {
+        "main": {
+            "position": {
+                "x": {"min": -135, "max": -102},
+                "y": {"min": 70, "max": 95},
+                "z": {"min": -39, "max": -20}
+            },
+            "on_player_enter": "smithed:on_enter",
+            "on_player_exit": "smithed:on_exit"
+        }
+    },
+    "ticking_functions": {
+        "model_resolver_summit:20tick": "20t",
+        "model_resolver_summit:loop_structure": "100t"
+    },
+    "balloons": [
+        {
+            "balloon_id": "model_resolver",
+            "balloon_name": "Model Resolver",
+            "balloon_model": "model_resolver_summit:item/balloon"
+        }
+    ]
+}
