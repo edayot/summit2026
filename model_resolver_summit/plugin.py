@@ -1,12 +1,12 @@
 from typing import NamedTuple
 
-from beet import Context, Font, Function, Texture
+from beet import Context, Font, Function, Texture, Generator
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
 from model_resolver.minecraft_model import DisplayOptionModel
 
-from model_resolver.render import Render
+from model_resolver.render import Render, StructureRenderTask # pyright: ignore[reportPrivateImportUsage]
 from PIL import Image
 import json
 
@@ -18,9 +18,9 @@ class AnimationChar(NamedTuple):
     height_big: str
 
 
-def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
+def create_animation_text(draft: Generator, id: str, n=4, scale: float = 1):
     path = f"minecraft:block/{id}"
-    render = Render(ctx, default_render_size=64)
+    render = Render(draft.ctx, default_render_size=64)
     task = render.add_model_task(path)
     render.run()
 
@@ -39,7 +39,7 @@ def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
         char_index += char_offset
 
         render_path = f"{NAMESPACE}:item/font/{id}/{i}"
-        ctx.assets.textures[render_path] = Texture(t.saved_img)
+        draft.assets.textures[render_path] = Texture(t.saved_img)
 
         char_small = f"\\u{char_index:04x}".encode().decode("unicode_escape")
         font["providers"].append(
@@ -75,7 +75,7 @@ def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
         if i % n == n - 1:
             text_images.append("\n\n")
 
-    ctx.assets.fonts[font_path] = Font(font)
+    draft.assets.fonts[font_path] = Font(font)
 
     code = f"""\
 from beet import Context
@@ -93,7 +93,7 @@ def beet_default(ctx: Context):
 
     res = f"{NAMESPACE}:impl/set_screen_display/{id}"
 
-    ctx.data.functions[res] = Function(f"""\
+    draft.data.functions[res] = Function(f"""\
 function ~/set_message_code:
     data modify entity @s text set value {json.dumps(message_code)}
 function ~/set_message_image:
@@ -105,7 +105,7 @@ execute if entity @s[tag=model_resolver_summit.screen.image] run return run func
     return res
     
 
-def structure_generation_code(ctx: Context):
+def structure_generation_code(draft: Generator):
 
     font: JsonDict = {
         "providers": [{"type": "reference", "id": "minecraft:include/space"}]
@@ -114,7 +114,7 @@ def structure_generation_code(ctx: Context):
 
     STRUCTURE_COOR = "186 86 -6"
 
-    func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/loop_structure", Function("""
+    func = draft.data.functions.setdefault(f"{NAMESPACE}:impl/loop_structure", Function("""
 schedule function ~/ 100t replace
 fill 186 86 -6 192 91 0 air strict
 """))
@@ -123,8 +123,9 @@ fill 186 86 -6 192 91 0 air strict
     char_index = 0xE000
     char_offset = 0x0005
 
-    render = Render(ctx, default_render_size=256)
-    for structure in sorted(ctx.data.structures.match("model_resolver_summit:*")):
+    tasks: dict[str, StructureRenderTask] = {}
+    render = Render(draft.ctx, default_render_size=256)
+    for structure in sorted(draft.data.structures.match("model_resolver_summit:*")):
 
         code = f"""\
 from beet import Context
@@ -186,8 +187,8 @@ def beet_default(ctx: Context):
 
         for suffix, char, display_option in configs:
             render_path = f"{NAMESPACE}:item/font/structure/{n}_{suffix}"
-            render.add_structure_task(
-                structure, path_ctx=render_path, animation_mode="one_file",
+            tasks[render_path] = render.add_structure_task(
+                structure, animation_mode="one_file",
                 display_option=display_option,
             )
             font["providers"].append(
@@ -219,7 +220,11 @@ execute
 """)
     render.run()
 
-    ctx.assets.fonts[font_path] = Font(font)
+    for path, task in tasks.items():
+        draft.assets.textures[path] = Texture(task.saved_img)
+
+
+    draft.assets.fonts[font_path] = Font(font)
 
 def beet_default(ctx: Context):
     screen = Item(
@@ -235,34 +240,36 @@ def beet_default(ctx: Context):
 
     # draft.cache("renders", "renders")
 
+    with ctx.generate.draft() as draft:
+        draft.cache("renders", "renders")
+        renders_animated = [
+            ("sculk_sensor", 4, 1),
+            ("calibrated_sculk_sensor", 4, 1),
+            ("sculk_shrieker", 8, 0.5),
+            ("sculk", 8, 0.5),
+            ("campfire", 8, 0.5),
+            ("soul_campfire", 8, 0.5),
+            ("warped_hyphae", 7, 0.6),
+            ("crimson_stem", 7, 0.6),
+            ("magma_block", 4, 0.75),
+            ("respawn_anchor_2", 6, 0.7),
+            ("command_block", 6, 0.7),
+            ("chain_command_block", 6, 0.7),
+            ("repeating_command_block", 6, 0.7),
+            ("seagrass", 4, 0.75),
+            ("kelp", 4, 0.75),
+        ]
+        
+        
+        i = 0
+        func = draft.data.functions.setdefault(f"{NAMESPACE}:impl/screen_reparts", Function("""
+    scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_resolver_summit.math
+    """))
+        for x, y, z in renders_animated:
+            res = create_animation_text(draft, x, y, z)
+            func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..16, predicate=model_resolver_summit:impl/search_id] run function {res}")
+            i += 1
+        draft.data.functions.setdefault(f"{NAMESPACE}:impl/load_set_max").append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
 
-    renders_animated = [
-        ("sculk_sensor", 4, 1),
-        ("sculk_shrieker", 8, 0.5),
-        ("sculk", 8, 0.5),
-        ("campfire", 8, 0.5),
-        ("soul_campfire", 8, 0.5),
-        ("warped_hyphae", 7, 0.6),
-        ("crimson_stem", 7, 0.6),
-        ("magma_block", 4, 0.75),
-        ("respawn_anchor_2", 6, 0.7),
-        ("command_block", 6, 0.7),
-        ("chain_command_block", 6, 0.7),
-        ("repeating_command_block", 6, 0.7),
-        ("seagrass", 4, 0.75),
-        ("kelp", 4, 0.75),
-    ]
-    
-    
-    i = 0
-    func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/screen_reparts", Function("""
-scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_resolver_summit.math
-"""))
-    for x, y, z in renders_animated:
-        res = create_animation_text(ctx, x, y, z)
-        func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..16, predicate=model_resolver_summit:impl/search_id] run function {res}")
-        i += 1
-    ctx.data.functions.setdefault(f"{NAMESPACE}:impl/load", Function("")).append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
 
-
-    structure_generation_code(ctx)
+        structure_generation_code(draft)
