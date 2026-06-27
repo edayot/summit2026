@@ -18,9 +18,9 @@ class AnimationChar(NamedTuple):
     height_big: str
 
 
-def create_animation_text(ctx: Generator, id: str, n=4, scale: float = 1):
+def create_animation_text(ctx: Context, id: str, n=4, scale: float = 1):
     path = f"minecraft:block/{id}"
-    render = Render(ctx.ctx, default_render_size=256)
+    render = Render(ctx, default_render_size=256)
     task = render.add_model_task(path)
     render.run()
 
@@ -254,7 +254,7 @@ def beet_default(ctx: Context):
 scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_resolver_summit.math
 """))
     for x, y, z in renders_animated:
-        res = create_animation_text(draft, x, y, z)
+        res = create_animation_text(ctx, x, y, z)
         func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..4, predicate=model_resolver_summit:impl/search_id] run function {res}")
         i += 1
     ctx.data.functions.setdefault(f"{NAMESPACE}:impl/load", Function("")).append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
