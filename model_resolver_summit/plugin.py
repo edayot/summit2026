@@ -1,14 +1,17 @@
+from pathlib import Path
 from typing import NamedTuple
 
-from beet import Context, Font, Function, Texture, Generator
+from beet import Context, Font, Function, ResourcePack, Texture, Generator
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
 from model_resolver.minecraft_model import DisplayOptionModel
+from model_resolver.pack_getter import PackGetterLookup
 
 from model_resolver.render import Render, StructureRenderTask # pyright: ignore[reportPrivateImportUsage]
 from PIL import Image
 import json
+import os
 
 from model_resolver_summit.code_style import tokenize_code
 
@@ -125,6 +128,8 @@ fill 186 86 -6 192 91 0 air strict
 
     tasks: dict[str, StructureRenderTask] = {}
     render = Render(draft.ctx, default_render_size=256)
+    render.getter._custom = PackGetterLookup(assets=ResourcePack(path=Path(__file__).parent.parent / "private" / "summit-rp.zip")) # pyright: ignore[reportAttributeAccessIssue]
+    render.getter.lookups.insert(0, "_custom")
     for structure in sorted(draft.ctx.data.structures.match("model_resolver_summit:*")):
 
         code = f"""\
@@ -207,7 +212,7 @@ def beet_default(ctx: Context):
 execute 
     if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}
     run function ~/place_structure_{n}:
-        place template {structure} {STRUCTURE_COOR}
+        place template {structure} {STRUCTURE_COOR} none none 1 0 strict
         {"\n        ".join(commands)}
 """)
 
@@ -221,7 +226,10 @@ execute
     render.run()
 
     for path, task in tasks.items():
-        draft.assets.textures[path] = Texture(task.saved_img)
+        if task.tasks:
+            draft.assets.textures[path] = Texture(task.tasks[0].saved_img)
+        else:
+            draft.assets.textures[path] = Texture(task.saved_img)
 
 
     draft.assets.fonts[font_path] = Font(font)
@@ -241,26 +249,34 @@ def beet_default(ctx: Context):
     # draft.cache("renders", "renders")
 
     with ctx.generate.draft() as draft:
-        draft.cache("renders", "renders")
-        renders_animated = [
-            ("sculk_sensor", 4, 1),
-            ("calibrated_sculk_sensor", 4, 1),
-            ("sculk_shrieker", 8, 0.5),
-            ("sculk", 8, 0.5),
-            ("campfire", 8, 0.5),
-            ("soul_campfire", 8, 0.5),
-            ("warped_hyphae", 7, 0.6),
-            ("crimson_stem", 7, 0.6),
-            ("magma_block", 4, 0.75),
-            ("respawn_anchor_2", 6, 0.7),
-            ("command_block", 6, 0.7),
-            ("chain_command_block", 6, 0.7),
-            ("repeating_command_block", 6, 0.7),
-            ("seagrass", 4, 0.75),
-            ("kelp", 4, 0.75),
-        ]
-        
-        
+        key = ""
+        for struct in sorted(ctx.data.structures.match("model_resolver_summit:*")):
+            s = ctx.data.structures[struct]
+            time = None
+            if s.source_path:
+                time = os.path.getmtime(s.source_path)
+            key = key + f"{struct} {time}\n"
+        draft.cache("structure", key)
+        structure_generation_code(draft)
+    renders_animated = [
+        ("sculk_sensor", 4, 1),
+        ("calibrated_sculk_sensor", 4, 1),
+        ("sculk_shrieker", 8, 0.5),
+        ("sculk", 8, 0.5),
+        ("campfire", 8, 0.5),
+        ("soul_campfire", 8, 0.5),
+        ("warped_hyphae", 7, 0.6),
+        ("crimson_stem", 7, 0.6),
+        ("magma_block", 4, 0.75),
+        ("respawn_anchor_2", 6, 0.7),
+        ("command_block", 6, 0.7),
+        ("chain_command_block", 6, 0.7),
+        ("repeating_command_block", 6, 0.7),
+        ("seagrass", 4, 0.75),
+        ("kelp", 4, 0.75),
+    ]
+    with ctx.generate.draft() as draft:
+        draft.cache("renders", str(renders_animated))
         i = 0
         func = draft.data.functions.setdefault(f"{NAMESPACE}:impl/screen_reparts", Function("""
     scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_resolver_summit.math
@@ -272,4 +288,3 @@ def beet_default(ctx: Context):
         draft.data.functions.setdefault(f"{NAMESPACE}:impl/load_set_max").append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
 
 
-        structure_generation_code(draft)

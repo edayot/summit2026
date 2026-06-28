@@ -30,7 +30,7 @@ resource_pack:
     - src
     - simpledrawer
 
-  zipped: true
+  # zipped: true
 
 meta:
   mc_supports:
@@ -50,7 +50,7 @@ meta:
   model_resolver:
     render_size: 256
     load_vanilla: true
-    minecraft_version: "26.1.2"
+    minecraft_version: "26.2"
     special_rendering: true
 
   smithed:
