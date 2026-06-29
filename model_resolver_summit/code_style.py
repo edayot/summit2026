@@ -1,12 +1,12 @@
 from typing import Any
 
 from pygments import lex
-from pygments.lexers import PythonLexer
+from pygments.lexers import get_lexer_by_name
 from pygments.styles import get_style_by_name
 from pygments.token import Token
 
 
-def tokenize_code(code: str, style_name: str = "material") -> list[dict]:
+def tokenize_code(code: str, style_name: str = "material", lexer: str = "python") -> list[dict]:
     """
     Tokenizes a Python code string and returns a list of
     {text, color, bold, italic} dicts ready for UI rendering.
@@ -19,7 +19,7 @@ def tokenize_code(code: str, style_name: str = "material") -> list[dict]:
         List of token dicts with keys: text, color, bold, italic.
     """
     style = get_style_by_name(style_name)
-    lexer = PythonLexer()
+    lexer = get_lexer_by_name(lexer)
     default_color = (
         f"#{style.style_for_token(Token)['color']}"
         if style.style_for_token(Token)["color"]

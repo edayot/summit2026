@@ -58,4 +58,9 @@ upload_to_vcs_release = true
 [tool.uv.sources]
 simple-item-plugin = { path = "../simple_item_plugin", editable = true }
 model-resolver = { path = "../model_resolver", editable = true }
+
+[tool.uv.workspace]
+members = [
+    "temp",
+]
 # weld-deps = { path = "../weld-deps", editable = true }
