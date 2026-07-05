@@ -37,10 +37,12 @@ execute summon interaction run function ./place_next_button:
     prev_func = ~/prev_structure
 
     function next_func:
+        execute on target playsound minecraft:entity.glow_item_frame.rotate_item block @a ~ ~ ~ 2 1
         scoreboard players add @s model_resolver_summit.current_display 1
         execute if score @s model_resolver_summit.current_display = #MAX model_resolver_summit.current_display run scoreboard players set @s model_resolver_summit.current_display 0
         function f"model_resolver_summit:impl/screen_reparts"
     function prev_func:
+        execute on attacker playsound minecraft:entity.glow_item_frame.rotate_item block @a ~ ~ ~ 2 1
         scoreboard players remove @s model_resolver_summit.current_display 1
         execute if score @s model_resolver_summit.current_display matches -1 run function ~/reset:
             scoreboard players operation @s model_resolver_summit.current_display = #MAX model_resolver_summit.current_display

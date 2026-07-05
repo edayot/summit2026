@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import NamedTuple
 
-from beet import Context, Font, Function, ResourcePack, Texture, Generator
+from beet import Context, Draft, Font, Function, ResourcePack, Texture, Generator
 from beet.core.utils import JsonDict
 from simple_item_plugin.types import NAMESPACE, Lang
 from simple_item_plugin.item import Item, BlockProperties
 from model_resolver.minecraft_model import DisplayOptionModel
 from model_resolver.pack_getter import PackGetterLookup
+from model_resolver.item_model.item import Item as ModelResolverItem
 
 from model_resolver.render import Render, StructureRenderTask # pyright: ignore[reportPrivateImportUsage]
 from PIL import Image
@@ -30,7 +31,7 @@ def create_animation_text(draft: Generator, id: str, n=4, scale: float = 1):
     font: JsonDict = {
         "providers": [{"type": "reference", "id": "minecraft:include/space"}]
     }
-    font_path = f"{NAMESPACE}:font/{id}"
+    font_path = f"{NAMESPACE}:{id}"
 
     char_index = 0xE000
     char_offset = 0x0004
@@ -82,6 +83,7 @@ def create_animation_text(draft: Generator, id: str, n=4, scale: float = 1):
 
     code = f"""\
 from beet import Context
+from model_resolver import Render
                                                                           
 def beet_default(ctx: Context):
     render = Render(ctx)
@@ -130,10 +132,13 @@ fill 186 86 -6 192 91 0 air strict
     render = Render(draft.ctx, default_render_size=256)
     render.getter._custom = PackGetterLookup(assets=ResourcePack(path=Path(__file__).parent.parent / "private" / "summit-rp.zip")) # pyright: ignore[reportAttributeAccessIssue]
     render.getter.lookups.insert(0, "_custom")
+    render.getter._simpledrawer = PackGetterLookup(assets=ResourcePack(path=Path(__file__).parent.parent / "private" / "simpledrawer-rp.zip")) # pyright: ignore[reportAttributeAccessIssue]
+    render.getter.lookups.insert(0, "_simpledrawer")
     for structure in sorted(draft.ctx.data.structures.match("model_resolver_summit:*")):
 
         code = f"""\
 from beet import Context
+from model_resolver import Render
 
 def beet_default(ctx: Context):
     render = Render(ctx)
@@ -234,6 +239,53 @@ execute
 
     draft.assets.fonts[font_path] = Font(font)
 
+def render_banner(draft: Draft):
+    render = Render(draft.ctx)
+    task = render.add_item_task(
+        ModelResolverItem(
+            id="minecraft:white_banner",
+            components={
+                "minecraft:item_name": {"translate": "block.minecraft.ominous_banner"}, 
+                "minecraft:tooltip_display": {"hidden_components": ["minecraft:banner_patterns"]}, 
+                "minecraft:rarity": "uncommon", 
+                "minecraft:banner_patterns": [
+                    {"color": "cyan",           "pattern": "minecraft:rhombus"}, 
+                    {"color": "light_gray",     "pattern": "minecraft:stripe_bottom"}, 
+                    {"color": "gray",           "pattern": "minecraft:stripe_center"}, 
+                    {"color": "light_gray",     "pattern": "minecraft:border"}, 
+                    {"color": "black",          "pattern": "minecraft:stripe_middle"}, 
+                    {"color": "light_gray",     "pattern": "minecraft:half_horizontal"}, 
+                    {"color": "light_gray",     "pattern": "minecraft:circle"}, 
+                    {"color": "black",          "pattern": "minecraft:border"}
+                ]
+            }
+        ),
+        render_size=256,
+    )
+    render.run()
+    render_path = f"{NAMESPACE}:item/ominous_banner"
+    draft.assets.textures[render_path] = Texture(task.saved_img)
+
+    font: JsonDict = {
+        "providers": [{"type": "reference", "id": "minecraft:include/space"}]
+    }
+    char = f"\\u{0xE000:04x}".encode().decode("unicode_escape")
+    font["providers"].append(
+        {
+            "type": "bitmap",
+            "file": f"{render_path}.png",
+            "ascent": 24,
+            "height": 48,
+            "chars": [char],
+        }
+    )
+    font_path = f"{NAMESPACE}:ominous_banner"
+    draft.assets.fonts[font_path] = Font(font)
+    draft.data.functions[f"{NAMESPACE}:impl/display_in_chat/ominous_banner"] = Function(
+        f"tellraw @s {json.dumps(["", {'text': f"\n\n{char}", 'font': font_path, 'color': 'white'},"        This is a render of an Ominous Banner !\n\n\n"])}"
+    )
+
+
 def beet_default(ctx: Context):
     screen = Item(
         id="screen",
@@ -246,7 +298,41 @@ def beet_default(ctx: Context):
         ),
     ).export(ctx)
 
-    # draft.cache("renders", "renders")
+    code = """\
+from beet import Context
+from model_resolver import Render, Item
+
+def beet_default(ctx: Context):
+    render = Render(ctx)
+    item = Item(
+        id="minecraft:white_banner",
+        components={
+            "minecraft:item_name": {"translate": "block.minecraft.ominous_banner"}, 
+            "minecraft:banner_patterns": [
+                {"color": "cyan",           "pattern": "minecraft:rhombus"}, 
+                {"color": "light_gray",     "pattern": "minecraft:stripe_bottom"}, 
+                {"color": "gray",           "pattern": "minecraft:stripe_center"}, 
+                {"color": "light_gray",     "pattern": "minecraft:border"}, 
+                {"color": "black",          "pattern": "minecraft:stripe_middle"}, 
+                {"color": "light_gray",     "pattern": "minecraft:half_horizontal"}, 
+                {"color": "light_gray",     "pattern": "minecraft:circle"}, 
+                {"color": "black",          "pattern": "minecraft:border"}
+            ]
+        }
+    )
+    render.add_item_task(item, path_ctx="minecraft:ominous_banner")
+    render.run()
+
+"""
+    message_code = tokenize_code(code, lexer="python")
+    command = f"data modify entity @n[type=text_display] text set value {json.dumps(message_code)}"
+
+    func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/set_text_ominous_banner", Function(command))
+
+
+    with ctx.generate.draft() as draft:
+        draft.cache("banner", "banner")
+        render_banner(draft)
 
     with ctx.generate.draft() as draft:
         key = ""

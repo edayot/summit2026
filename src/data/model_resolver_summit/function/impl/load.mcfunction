@@ -2,7 +2,6 @@
 
 execute as @a[tag=convention.debug] run function model_resolver_summit:impl/print_version
 schedule function ./tick_structure_room 1t replace
-schedule function ./tick 1t replace
 schedule function ./20tick 200t replace
 schedule function ./loop_structure 10t replace
 
