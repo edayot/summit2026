@@ -193,7 +193,7 @@ def beet_default(ctx: Context):
         ]
 
         commands = []
-        commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.code, type=text_display] text set value {json.dumps(message_code)}")
+        commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.code, type=text_display, distance=..10] text set value {json.dumps(message_code)}")
 
         for suffix, char, display_option in configs:
             render_path = f"{NAMESPACE}:item/font/structure/{n}_{suffix}"
@@ -210,12 +210,13 @@ def beet_default(ctx: Context):
                     "chars": [char],
                 }
             )
-            commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.{suffix}, type=text_display] text set value {json.dumps({'text': char, 'font': font_path, 'color': 'white'})}")
+            commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.{suffix}, type=text_display, distance=..10] text set value {json.dumps({'text': char, 'font': font_path, 'color': 'white'})}")
         
 
         func.append(f"""
 execute 
     if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}
+    positionned 203 88 -3
     run function ~/place_structure_{n}:
         place template {structure} {STRUCTURE_COOR} none none 1 0 strict
         {"\n        ".join(commands)}
