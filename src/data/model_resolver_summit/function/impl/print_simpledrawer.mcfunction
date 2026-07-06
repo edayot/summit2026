@@ -1,53 +1,36 @@
-tellraw @s [
-    '',
-    { text: 'SimpleDrawer', color: 'yellow' },
-    ' is available on : ',
-    {
-        font: 'summit_icons:icons', 
-        translate: 'summit_icons.github', 
-        click_event: {
-            'action': 'open_url',
-            'url': 'https://github.com/edayot/SimpleDrawer'
-        },
-        hover_event: {
-            'action': 'show_text',
-            'value': 'GitHub'
-        }
-    },
-    {
-        font: 'summit_icons:icons', 
-        translate: 'summit_icons.smithed', 
-        click_event: {
-            'action': 'open_url',
-            'url': 'https://smithed.net/packs/simpledrawer'
-        },
-        hover_event: {
-            'action': 'show_text',
-            'value': 'Smithed'
-        }
-    },
-    {
-        font: 'summit_icons:icons', 
-        translate: 'summit_icons.modrinth', 
-        click_event: {
-            'action': 'open_url',
-            'url': 'https://modrinth.com/datapack/simpledrawer'
-        },
-        hover_event: {
-            'action': 'show_text',
-            'value': 'Modrinth'
-        }
-    },
-    {
-        font: 'summit_icons:icons', 
-        translate: 'summit_icons.planetminecraft', 
-        click_event: {
-            'action': 'open_url',
-            'url': 'https://www.planetminecraft.com/data-pack/simple-drawer/'
-        },
-        hover_event: {
-            'action': 'show_text',
-            'value': 'Planet Minecraft'
-        }
-    },
+
+
+links = [
+    ("GitHub", "https://github.com/edayot/SimpleDrawer", "summit_icons.github"),
+    ("Smithed", "https://smithed.net/packs/simpledrawer", "summit_icons.smithed"),
+    ("Modrinth", "https://modrinth.com/datapack/simpledrawer", "summit_icons.modrinth"),
+    ("Planet Minecraft", "https://www.planetminecraft.com/data-pack/simple-drawer/", "summit_icons.planetminecraft"),
 ]
+
+actions = []
+for link in links:
+    actions.append({
+        "label": [
+            "", 
+            {
+                "font": 'summit_icons:icons', 
+                "translate": link[2],
+            }, 
+            " ",
+            link[0]
+        ],
+        "tooltip": {"text": link[1], "color": "gray"},
+        "width": 300,
+        "action": {"type": "open_url", "url": link[1]},
+    })
+
+
+dialog show @s {
+    "type": "minecraft:multi_action",
+    "title": {"text": "Links", "bold": True, "color": "#FFD479"},
+    "body": [],
+    "columns": 1,
+    "actions": actions,
+    "exit_action": {"label": {"text": "Close", "color": "red"}},
+    "can_close_with_escape": True,
+}

@@ -30,7 +30,7 @@ resource_pack:
     - src
     - simpledrawer
 
-  # zipped: true
+  zipped: true
 
 meta:
   mc_supports:
