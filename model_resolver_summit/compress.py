@@ -11,6 +11,8 @@ def to_bytes(self, content: Image.Image) -> bytes:
 def beet_default(ctx: Context):
     PngFile.to_bytes = to_bytes
     yield
+    for texture in ctx.assets.textures.values():
+        texture.image.to_bytes = to_bytes
     ctx.require("beet.contrib.minify_json")
     ctx.require("beet.contrib.minify_function")
 

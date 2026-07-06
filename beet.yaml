@@ -23,6 +23,7 @@ data_pack:
   load: 
     - src
     - simpledrawer
+  zipped: true
 
 resource_pack:
   name: "{{ project_id }}_{{ project_version }}_rp_bundled"

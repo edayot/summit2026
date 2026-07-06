@@ -216,7 +216,7 @@ def beet_default(ctx: Context):
         func.append(f"""
 execute 
     if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}
-    positionned 203 88 -3
+    positioned 203 88 -3
     run function ~/place_structure_{n}:
         place template {structure} {STRUCTURE_COOR} none none 1 0 strict
         {"\n        ".join(commands)}
