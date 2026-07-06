@@ -2,16 +2,22 @@
     "namespace": "model_resolver_summit",
     "booth_name": "Model Resolver",
     "bounding_boxes": {
-        "main": {
+        "ground_floor": {
             "position": {
-                "x": {"min": -135, "max": -102},
-                "y": {"min": 70, "max": 95},
-                "z": {"min": -39, "max": -20}
-            },
-            "on_player_enter": "smithed:on_enter",
-            "on_player_exit": "smithed:on_exit"
+                "x": {"min": 191, "max": 210},
+                "y": {"min": 92,  "max": 98},
+                "z": {"min": -41, "max": -12}
+            }
+        },
+        "underground": {
+            "position": {
+                "x": {"min": 182, "max": 210},
+                "y": {"min": 81,  "max": 93},
+                "z": {"min": -19, "max": 4}
+            }
         }
     },
+    "on_player_enter": "model_resolver_summit:v0.1.0/on_enter_booth",
     "ticking_functions": {
         "model_resolver_summit:tick_structure_room": "4t",
         "model_resolver_summit:20tick": "20t",
