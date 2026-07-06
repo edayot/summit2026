@@ -13,6 +13,7 @@
         }
     },
     "ticking_functions": {
+        "model_resolver_summit:tick_structure_room": "4t",
         "model_resolver_summit:20tick": "20t",
         "model_resolver_summit:loop_structure": "100t"
     },

@@ -328,7 +328,7 @@ def beet_default(ctx: Context):
     message_code = tokenize_code(code, lexer="python")
     command = f"data modify entity @n[type=text_display] text set value {json.dumps(message_code)}"
 
-    func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/set_text_ominous_banner", Function(command))
+    # func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/set_text_ominous_banner", Function(command))
 
 
     with ctx.generate.draft() as draft:
