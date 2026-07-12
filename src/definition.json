@@ -40,6 +40,13 @@
                 "sticker_name": "Welcome to Booth",
                 "unobtained_text": "I'm around a staircase",
                 "obtained_text": "Good findings!"
+            },
+            {
+                "sticker_id": "simpledrawer_sticker",
+                "sticker_texture": "model_resolver_summit:item/simpledrawer_sticker",
+                "sticker_name": "SimpleDrawer",
+                "unobtained_text": "Learning about the SimpleDrawer...",
+                "obtained_text": "Storing items!"
             }
         ]
     }
