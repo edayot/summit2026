@@ -22,7 +22,7 @@ class AnimationChar(NamedTuple):
     height_big: str
 
 
-def create_animation_text(draft: Generator, id: str, n=4, scale: float = 1):
+def create_animation_text(draft: Generator, id: str, n: int = 4, scale: float = 1):
     path = f"minecraft:block/{id}"
     render = Render(draft.ctx, default_render_size=64)
     task = render.add_model_task(path)
@@ -38,34 +38,62 @@ def create_animation_text(draft: Generator, id: str, n=4, scale: float = 1):
 
     char_map: list[AnimationChar] = []
 
-    for i, t in enumerate(task.tasks):
-        assert isinstance(t.saved_img, Image.Image)
-        char_index += char_offset
+    images = [t.saved_img for t in task.tasks]
+    for img in images:
+        assert isinstance(img, Image.Image)
 
-        render_path = f"{NAMESPACE}:item/font/{id}/{i}"
-        draft.assets.textures[render_path] = Texture(t.saved_img)
+    # taille de cellule = taille d'un rendu (identiques car default_render_size fixe)
+    cell_w, cell_h = images[0].size
+    cols = n
+    rows = -(-len(images) // cols)  # ceil division
 
-        char_small = f"\\u{char_index:04x}".encode().decode("unicode_escape")
-        font["providers"].append(
-            {
-                "type": "bitmap",
-                "file": f"{render_path}.png",
-                "ascent": 8,
-                "height": 16,
-                "chars": [char_small],
-            }
-        )
-        char_big = f"\\u{char_index+1:04x}".encode().decode("unicode_escape")
-        font["providers"].append(
-            {
-                "type": "bitmap",
-                "file": f"{render_path}.png",
-                "ascent": 8,
-                "height": 32,
-                "chars": [char_big],
-            }
-        )
-        char_map.append(AnimationChar(char_small, char_big))
+    # une seule image regroupant tous les rendus
+    sheet = Image.new("RGBA", (cell_w * cols, cell_h * rows), (0, 0, 0, 0))
+
+    small_rows: list[str] = []
+    big_rows: list[str] = []
+
+    for r in range(rows):
+        small_row = ""
+        big_row = ""
+        for c in range(cols):
+            i = r * cols + c
+            char_index += char_offset
+            char_small = f"\\u{char_index:04x}".encode().decode("unicode_escape")
+            char_big = f"\\u{char_index + 1:04x}".encode().decode("unicode_escape")
+
+            if i < len(images):
+                sheet.paste(images[i], (c * cell_w, r * cell_h))
+                char_map.append(AnimationChar(char_small, char_big))
+            # sinon : cellule vide (padding), le char n'est jamais utilisé dans text_images
+
+            small_row += char_small
+            big_row += char_big
+
+        small_rows.append(small_row)
+        big_rows.append(big_row)
+
+    render_path = f"{NAMESPACE}:item/font/{id}"
+    draft.assets.textures[render_path] = Texture(sheet)
+
+    font["providers"].append(
+        {
+            "type": "bitmap",
+            "file": f"{render_path}.png",
+            "ascent": 8,
+            "height": 16,
+            "chars": small_rows,
+        }
+    )
+    font["providers"].append(
+        {
+            "type": "bitmap",
+            "file": f"{render_path}.png",
+            "ascent": 8,
+            "height": 32,
+            "chars": big_rows,
+        }
+    )
 
     text_images: list[JsonDict | str] = [""]
     for i, (char_small, char_big) in enumerate(char_map):
@@ -94,7 +122,6 @@ def beet_default(ctx: Context):
     render.run()
 """
     message_code = tokenize_code(code)
-
 
     res = f"{NAMESPACE}:impl/set_screen_display/{id}"
 
