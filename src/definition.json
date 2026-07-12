@@ -4,16 +4,16 @@
     "bounding_boxes": {
         "ground_floor": {
             "position": {
-                "x": {"min": 191, "max": 210},
-                "y": {"min": 92,  "max": 98},
-                "z": {"min": -41, "max": -12}
+                "x": {"min": 191.0, "max": 210.0},
+                "y": {"min": 92.0,  "max": 98.0},
+                "z": {"min": -41.0, "max": -12.0}
             }
         },
         "underground": {
             "position": {
-                "x": {"min": 182, "max": 210},
-                "y": {"min": 81,  "max": 93},
-                "z": {"min": -19, "max": 4}
+                "x": {"min": 182.0, "max": 210.0},
+                "y": {"min": 81.0,  "max": 93.0},
+                "z": {"min": -19.0, "max": 4.0}
             }
         }
     },
@@ -29,5 +29,18 @@
             "balloon_name": "Model Resolver",
             "balloon_model": "model_resolver_summit:item/balloon"
         }
-    ]
+    ],
+    "sticker_book": {
+        "background_color": "#0acf32",
+        "region": "welded_woodlands",
+        "stickers": [
+            {
+                "sticker_id": "structure_sticker",
+                "sticker_texture": "model_resolver_summit:item/structure_sticker",
+                "sticker_name": "Welcome to Booth",
+                "unobtained_text": "I'm around a staircase",
+                "obtained_text": "Good findings!"
+            }
+        ]
+    }
 }
