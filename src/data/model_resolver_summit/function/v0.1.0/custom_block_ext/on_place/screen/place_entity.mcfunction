@@ -14,7 +14,7 @@ execute summon text_display run function ./place_text_display:
 
     data merge entity @s {Tags:["model_resolver_summit.screen.text_display", "model_resolver_summit.screen.image", "summit.dynamic"], text: "", line_width: 500, background: 0}
     tag @s add model_resolver_summit.screen.part
-    function model_resolver_summit:impl/set_screen_display/sculk_sensor
+    function model_resolver_summit:v0.1.0/set_screen_display/sculk_sensor
     tp @s ~ ~ ~ ~ ~
     execute at @s run tp @s ^1.8 ^-0.6 ^
 
@@ -23,7 +23,7 @@ execute summon text_display run function ./place_text_display_code:
 
     data merge entity @s {Tags:["model_resolver_summit.screen.text_display", "model_resolver_summit.screen.code", "summit.dynamic"], text: "", line_width: 500, background: -15198184, alignment:"left"}
     tag @s add model_resolver_summit.screen.part
-    function model_resolver_summit:impl/set_screen_display/sculk_sensor
+    function model_resolver_summit:v0.1.0/set_screen_display/sculk_sensor
     data merge entity @s {transformation: {scale: [0.45, 0.45, 0.45]}}
     tp @s ~ ~ ~ ~ ~
     execute at @s run tp @s ^-1.1 ^-0.2 ^0.025
@@ -40,14 +40,14 @@ execute summon interaction run function ./place_next_button:
         execute on target playsound minecraft:entity.glow_item_frame.rotate_item block @a ~ ~ ~ 2 1
         scoreboard players add @s model_resolver_summit.current_display 1
         execute if score @s model_resolver_summit.current_display = #MAX model_resolver_summit.current_display run scoreboard players set @s model_resolver_summit.current_display 0
-        function f"model_resolver_summit:impl/screen_reparts"
+        function f"model_resolver_summit:v0.1.0/screen_reparts"
     function prev_func:
         execute on attacker playsound minecraft:entity.glow_item_frame.rotate_item block @a ~ ~ ~ 2 1
         scoreboard players remove @s model_resolver_summit.current_display 1
         execute if score @s model_resolver_summit.current_display matches -1 run function ~/reset:
             scoreboard players operation @s model_resolver_summit.current_display = #MAX model_resolver_summit.current_display
             scoreboard players remove @s model_resolver_summit.current_display 1
-        function f"model_resolver_summit:impl/screen_reparts"
+        function f"model_resolver_summit:v0.1.0/screen_reparts"
 
     tag @s add summit.interactable
     tag @s add model_resolver_summit.screen.part

@@ -123,7 +123,7 @@ def beet_default(ctx: Context):
 """
     message_code = tokenize_code(code)
 
-    res = f"{NAMESPACE}:impl/set_screen_display/{id}"
+    res = f"{NAMESPACE}:v0.1.0/set_screen_display/{id}"
 
     draft.data.functions[res] = Function(f"""\
 function ~/set_message_code:
@@ -146,7 +146,7 @@ def structure_generation_code(draft: Generator):
 
     STRUCTURE_COOR = "186 86 -6"
 
-    func = draft.data.functions.setdefault(f"{NAMESPACE}:impl/loop_structure", Function("""
+    func = draft.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/loop_structure", Function("""
 schedule function ~/ 100t replace
 fill 186 86 -6 192 91 0 air strict
 """))
@@ -309,7 +309,7 @@ def render_banner(draft: Draft):
     )
     font_path = f"{NAMESPACE}:ominous_banner"
     draft.assets.fonts[font_path] = Font(font)
-    draft.data.functions[f"{NAMESPACE}:impl/display_in_chat/ominous_banner"] = Function(
+    draft.data.functions[f"{NAMESPACE}:v0.1.0/display_in_chat/ominous_banner"] = Function(
         f"tellraw @s {json.dumps(["", {'text': f"\n\n{char}", 'font': font_path, 'color': 'white'},"        This is a render of an Ominous Banner !\n\n\n"])}"
     )
 
@@ -355,7 +355,7 @@ def beet_default(ctx: Context):
     message_code = tokenize_code(code, lexer="python")
     command = f"data modify entity @n[type=text_display] text set value {json.dumps(message_code)}"
 
-    # func = ctx.data.functions.setdefault(f"{NAMESPACE}:impl/set_text_ominous_banner", Function(command))
+    # func = ctx.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/set_text_ominous_banner", Function(command))
 
 
     with ctx.generate.draft() as draft:
@@ -392,13 +392,13 @@ def beet_default(ctx: Context):
     with ctx.generate.draft() as draft:
         draft.cache("renders", str(renders_animated))
         i = 0
-        func = draft.data.functions.setdefault(f"{NAMESPACE}:impl/screen_reparts", Function("""
+        func = draft.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/screen_reparts", Function("""
     scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_resolver_summit.math
     """))
         for x, y, z in renders_animated:
             res = create_animation_text(draft, x, y, z)
-            func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..16, predicate=model_resolver_summit:impl/search_id] run function {res}")
+            func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..16, predicate=model_resolver_summit:v0.1.0/search_id] run function {res}")
             i += 1
-        draft.data.functions.setdefault(f"{NAMESPACE}:impl/load_set_max").append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
+        draft.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/load_set_max").append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
 
 

@@ -1,1 +1,0 @@
-tellraw @s {"text":f"[Loaded model_resolver_summit v{ctx.project_version}]","color":"green"}

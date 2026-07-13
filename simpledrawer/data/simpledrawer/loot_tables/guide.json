@@ -52,7 +52,7 @@
             },
             {
               "function": "minecraft:reference",
-              "name": "simpledrawer:impl/guide"
+              "name": "simpledrawer:v0.1.0/guide"
             }
           ]
         }
