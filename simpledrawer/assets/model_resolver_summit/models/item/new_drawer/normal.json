@@ -1,0 +1,10 @@
+{
+    "parent": "model_resolver_summit:item/new_drawer/full_drawers_orientable",
+    "textures": {
+        "top": "model_resolver_summit:block/new_drawer/drawers_oak_side",
+        "front": "model_resolver_summit:block/new_drawer/drawers_oak_front_1",
+        "side": "model_resolver_summit:block/new_drawer/drawers_oak_side",
+        "bottom": "model_resolver_summit:block/new_drawer/drawers_oak_trim",
+        "particle": "model_resolver_summit:block/new_drawer/drawers_oak_front_1"
+    }
+}

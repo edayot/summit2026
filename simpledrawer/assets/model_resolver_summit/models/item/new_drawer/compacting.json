@@ -1,0 +1,9 @@
+{
+    "parent": "model_resolver_summit:item/new_drawer/full_drawers_orientable",
+    "textures": {
+        "top": "model_resolver_summit:block/new_drawer/drawers_comp_side",
+        "front": "model_resolver_summit:block/new_drawer/drawers_comp_front_2",
+        "side": "model_resolver_summit:block/new_drawer/drawers_comp_side",
+        "bottom": "model_resolver_summit:block/new_drawer/drawers_comp_trim"
+    }
+}

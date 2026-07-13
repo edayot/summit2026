@@ -1,0 +1,175 @@
+{
+	"model": {
+		"type": "composite",
+		"models": [
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/0"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/1"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/2"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/3"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/4"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/5"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/6"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/7"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/8"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/9"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/10"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/11"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/12"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/13"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/14"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/15"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/16"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/17"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/18"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/19"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/20"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/21"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/22"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/23"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/24"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/25"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/26"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/27"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/28"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/29"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/30"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/31"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/32"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/33"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/34"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/35"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/36"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/37"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/38"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/39"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/40"
+			},
+			{
+				"type": "model",
+				"model": "model_resolver_summit:logo_simpledrawer/41"
+			}
+		]
+	}
+}

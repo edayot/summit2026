@@ -1,0 +1,28 @@
+{
+	"textures": {
+		"0": "model_resolver_summit:item/drawer"
+	},
+	"elements": [
+		{
+			"from": [7.8, 7.6, 6.7],
+			"to": [8.2, 8.4, 9.3],
+			"faces": {
+				"east": {
+					"uv": [0, 13.3, 0.016, 13.35],
+					"texture": "#0"
+				},
+				"up": {
+					"uv": [0, 13.3, 0.016, 13.35],
+					"texture": "#0"
+				}
+			}
+		}
+	],
+	"display": {
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [-3.6, -7.6, 0],
+			"scale": [1, 1, 1]
+		}
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"textures": {
+		"1": "model_resolver_summit:item/banner"
+	},
+	"elements": [
+		{
+			"from": [7.79, 7.86, 7.65],
+			"to": [8.21, 8.14, 8.35],
+			"faces": {
+				"east": {
+					"uv": [0, 13.3, 0.016, 13.35],
+					"texture": "#1"
+				},
+				"west": {
+					"uv": [0, 13.3, 0.016, 13.35],
+					"texture": "#1"
+				},
+				"up": {
+					"uv": [0, 13.3, 0.016, 13.35],
+					"texture": "#1"
+				}
+			}
+		}
+	],
+	"display": {
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [0.77, -3.2, -0.85],
+			"scale": [1, 1, 1]
+		}
+	}
+}

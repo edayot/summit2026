@@ -1,0 +1,36 @@
+{
+	"textures": {
+		"0": "model_resolver_summit:item/drawer"
+	},
+	"elements": [
+		{
+			"from": [6.6, 6, 6.9],
+			"to": [9.4, 10, 9.1],
+			"faces": {
+				"north": {
+					"uv": [8.8, 1.1, 9.248, 3.1],
+					"texture": "#0"
+				},
+				"south": {
+					"uv": [9.248, 1.1, 8.8, 3.1],
+					"texture": "#0"
+				},
+				"up": {
+					"uv": [9.248, 1.1, 8.8, 0],
+					"texture": "#0"
+				},
+				"down": {
+					"uv": [9.248, 4.2, 8.8, 3.1],
+					"texture": "#0"
+				}
+			}
+		}
+	],
+	"display": {
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [-8.6, -5.8, 0],
+			"scale": [1, 1, 1]
+		}
+	}
+}
