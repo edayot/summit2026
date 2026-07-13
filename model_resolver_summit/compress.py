@@ -56,6 +56,8 @@ def encode_png(image: Image.Image) -> bytes:
 def beet_default(ctx: Context):
     yield
     for path, texture in ctx.assets.textures.items():
+        if "banner" in path or "drawer" in path or path.endswith("model") or path.endswith("resolver"):
+            continue 
         img = convert(texture.image)
         ctx.assets.textures[path] = Texture(encode_png(img))
 
