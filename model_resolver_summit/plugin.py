@@ -134,7 +134,38 @@ function ~/set_message_image:
 execute if entity @s[tag=model_resolver_summit.screen.code] run return run function ~/set_message_code
 execute if entity @s[tag=model_resolver_summit.screen.image] run return run function ~/set_message_image
 """)
-    return res
+    lore_lines: list[JsonDict | str] = [""]
+    for i, (char_small, char_big) in enumerate(char_map):
+        lore_lines.append(
+            {
+                "text": char_small + " ",
+                "font": font_path,
+                "color": "white",
+            }
+        )
+        if i % n == n - 1:
+            lore_lines.append("\n\n")
+
+    tellraw_message = [
+        "",
+        {"text": "[Model Resolver Summit] ", "color": "green"},
+        {"text": "Switching to "},
+        {
+            "text": char_map[0][0] + "\n",
+            "font": font_path,
+            "hover_event": {
+                "action": "show_text",
+                "value": lore_lines,
+            },
+        },
+    ]
+
+    message_res = f"{NAMESPACE}:v0.1.0/switch_message/{id}"
+    draft.data.functions[message_res] = Function(
+        f"tellraw @s {json.dumps(tellraw_message)}"
+    )
+
+    return res, message_res
     
 
 def structure_generation_code(draft: Generator):
@@ -315,16 +346,16 @@ def render_banner(draft: Draft):
 
 
 def beet_default(ctx: Context):
-    screen = Item(
-        id="screen",
-        base_item="furnace",
-        item_name=(f"{NAMESPACE}:screen", {Lang.en_us: "Screen"}),
-        block_properties=BlockProperties(
-            base_block="minecraft:air",
-            entity_type="item_display",
-            destroy_code=False
-        ),
-    ).export(ctx)
+    # screen = Item(
+    #     id="screen",
+    #     base_item="furnace",
+    #     item_name=(f"{NAMESPACE}:screen", {Lang.en_us: "Screen"}),
+    #     block_properties=BlockProperties(
+    #         base_block="minecraft:air",
+    #         entity_type="item_display",
+    #         destroy_code=False
+    #     ),
+    # ).export(ctx)
 
     code = """\
 from beet import Context
@@ -392,12 +423,17 @@ def beet_default(ctx: Context):
     with ctx.generate.draft() as draft:
         draft.cache("renders", str(renders_animated))
         i = 0
-        func = draft.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/screen_reparts", Function("""
-    scoreboard players operation #SEARCH_ID model_resolver_summit.math = @s model_resolver_summit.math
-    """))
+        func = draft.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/screen_reparts", Function(""))
         for x, y, z in renders_animated:
-            res = create_animation_text(draft, x, y, z)
-            func.append(f"execute if score @s model_resolver_summit.current_display matches {i} as @e[tag=model_resolver_summit.screen.part, distance=..16, predicate=model_resolver_summit:v0.1.0/search_id] run function {res}")
+            res, message_res = create_animation_text(draft, x, y, z)
+            func.append(f"""
+execute 
+    if score @s model_resolver_summit.current_display matches {i}  
+    run function ~/change_to_{i}:
+        execute as @e[tag=model_resolver_summit.screen.part, distance=..16] run function {res}
+        execute on target run function {message_res}
+        execute on attacker run function {message_res}
+    """)
             i += 1
         draft.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/load_set_max").append(f"scoreboard players set #MAX model_resolver_summit.current_display {i}")
 
