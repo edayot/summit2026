@@ -186,12 +186,16 @@ fill 186 86 -6 192 91 0 air strict
     char_index = 0xE000
     char_offset = 0x0005
 
-    tasks: dict[str, StructureRenderTask] = {}
+    # au lieu de {render_path: task}, on garde la structure groupée par n
+    # pour pouvoir reconstituer la grille 2x2 après le render.run()
+    tasks_by_structure: dict[int, dict[str, StructureRenderTask]] = {}
+
     render = Render(draft.ctx, default_render_size=256)
-    render.getter._custom = PackGetterLookup(assets=ResourcePack(path=Path(__file__).parent.parent / "private" / "summit-rp.zip")) # pyright: ignore[reportAttributeAccessIssue]
+    render.getter._custom = PackGetterLookup(assets=ResourcePack(path=Path(__file__).parent.parent / "private" / "summit-rp.zip"))  # pyright: ignore[reportAttributeAccessIssue]
     render.getter.lookups.insert(0, "_custom")
-    render.getter._simpledrawer = PackGetterLookup(assets=ResourcePack(path=Path(__file__).parent.parent / "private" / "simpledrawer-rp.zip")) # pyright: ignore[reportAttributeAccessIssue]
+    render.getter._simpledrawer = PackGetterLookup(assets=ResourcePack(path=Path(__file__).parent.parent / "private" / "simpledrawer-rp.zip"))  # pyright: ignore[reportAttributeAccessIssue]
     render.getter.lookups.insert(0, "_simpledrawer")
+
     for structure in sorted(draft.ctx.data.structures.match("model_resolver_summit:*")):
 
         code = f"""\
@@ -213,8 +217,8 @@ def beet_default(ctx: Context):
 
         configs = [
             (
-                "iso", 
-                f"\\u{char_index:04x}".encode().decode("unicode_escape"), 
+                "iso",
+                f"\\u{char_index:04x}".encode().decode("unicode_escape"),
                 DisplayOptionModel(
                     scale=(1.5, 1.5, 1.5),
                     rotation=(30, 225, 0),
@@ -222,8 +226,8 @@ def beet_default(ctx: Context):
                 ),
             ),
             (
-                "front", 
-                f"\\u{char_index+1:04x}".encode().decode("unicode_escape"), 
+                "front",
+                f"\\u{char_index + 1:04x}".encode().decode("unicode_escape"),
                 DisplayOptionModel(
                     scale=(1.5, 1.5, 1.5),
                     rotation=(0, -90, 0),
@@ -231,8 +235,8 @@ def beet_default(ctx: Context):
                 ),
             ),
             (
-                "top", 
-                f"\\u{char_index+2:04x}".encode().decode("unicode_escape"), 
+                "top",
+                f"\\u{char_index + 2:04x}".encode().decode("unicode_escape"),
                 DisplayOptionModel(
                     scale=(1.5, 1.5, 1.5),
                     rotation=(90, 270, 0),
@@ -240,8 +244,8 @@ def beet_default(ctx: Context):
                 ),
             ),
             (
-                "left", 
-                f"\\u{char_index+3:04x}".encode().decode("unicode_escape"), 
+                "left",
+                f"\\u{char_index + 3:04x}".encode().decode("unicode_escape"),
                 DisplayOptionModel(
                     scale=(1.5, 1.5, 1.5),
                     rotation=(0, 0, 0),
@@ -253,23 +257,37 @@ def beet_default(ctx: Context):
         commands = []
         commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.code, type=text_display, distance=..10] text set value {json.dumps(message_code)}")
 
+        # un seul fichier texture pour les 4 vues de cette structure
+        render_path = f"{NAMESPACE}:item/font/structure/{n}"
+        structure_tasks: dict[str, StructureRenderTask] = {}
+
         for suffix, char, display_option in configs:
-            render_path = f"{NAMESPACE}:item/font/structure/{n}_{suffix}"
-            tasks[render_path] = render.add_structure_task(
+            structure_tasks[suffix] = render.add_structure_task(
                 structure, animation_mode="one_file",
                 display_option=display_option,
             )
-            font["providers"].append(
-                {
-                    "type": "bitmap",
-                    "file": f"{render_path}.png",
-                    "ascent": 8,
-                    "height": 16,
-                    "chars": [char],
-                }
+            commands.append(
+                f"data modify entity @n[tag=model_resolver_summit.structure.{suffix}, type=text_display, distance=..10] text set value "
+                f"{json.dumps({'text': char, 'font': font_path, 'color': 'white'})}"
             )
-            commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.{suffix}, type=text_display, distance=..10] text set value {json.dumps({'text': char, 'font': font_path, 'color': 'white'})}")
-        
+
+        tasks_by_structure[n] = structure_tasks
+
+        # grille 2x2 : ligne 0 = iso, front / ligne 1 = top, left
+        grid_chars = [
+            configs[0][1] + configs[1][1],
+            configs[2][1] + configs[3][1],
+        ]
+
+        font["providers"].append(
+            {
+                "type": "bitmap",
+                "file": f"{render_path}.png",
+                "ascent": 8,
+                "height": 16,
+                "chars": grid_chars,
+            }
+        )
 
         func.append(f"""
 execute 
@@ -280,7 +298,6 @@ execute
         {"\n        ".join(commands)}
 """)
 
-
     func.prepend(f"""
 scoreboard players add #GLOBAL_STRUCTURE model_resolver_summit.math 1
 execute 
@@ -289,12 +306,41 @@ execute
 """)
     render.run()
 
-    for path, task in tasks.items():
+    def resolve_image(task: StructureRenderTask) -> Image.Image:
         if task.tasks:
-            draft.assets.textures[path] = Texture(task.tasks[0].saved_img)
+            img = task.tasks[0].saved_img
         else:
-            draft.assets.textures[path] = Texture(task.saved_img)
+            img = task.saved_img
+        assert isinstance(img, Image.Image)
+        return img
 
+    for n, structure_tasks in tasks_by_structure.items():
+        images = {
+            suffix: resolve_image(task)
+            for suffix, task in structure_tasks.items()
+        }
+
+        # taille de cellule commune = max sur les 4 vues, pour un découpage
+        # en grille régulier côté client (division égale de l'image)
+        cell_w = max(img.width for img in images.values())
+        cell_h = max(img.height for img in images.values())
+
+        sheet = Image.new("RGBA", (cell_w * 2, cell_h * 2), (0, 0, 0, 0))
+        positions = {
+            "iso": (0, 0),
+            "front": (1, 0),
+            "top": (0, 1),
+            "left": (1, 1),
+        }
+        for suffix, img in images.items():
+            col, row = positions[suffix]
+            # on centre l'image dans la cellule si elle est plus petite que cell_w/h
+            offset_x = col * cell_w + (cell_w - img.width) // 2
+            offset_y = row * cell_h + (cell_h - img.height) // 2
+            sheet.paste(img, (offset_x, offset_y))
+
+        render_path = f"{NAMESPACE}:item/font/structure/{n}"
+        draft.assets.textures[render_path] = Texture(sheet)
 
     draft.assets.fonts[font_path] = Font(font)
 
