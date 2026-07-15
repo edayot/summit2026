@@ -24,7 +24,7 @@ execute if score #LIGHT_STRUCTURE model_resolver_summit.math matches f"{len(stat
 for i, state in enumerate(states):
     execute 
         if score #LIGHT_STRUCTURE model_resolver_summit.math matches f"{i}" 
-        run function f"model_resolver_summit:v0.1.0/place_state/{i}":
+        run return run function f"model_resolver_summit:v0.1.0/place_state/{i}":
             for j in range(9):
                 pos_1 = f"{base_pos[0] + j} {base_pos[1]} {base_pos[2]}"
                 pos_2 = f"{base_pos[0] + j} {base_pos[1]} {base_pos[2]+2}"

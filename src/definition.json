@@ -19,9 +19,9 @@
     },
     "on_player_enter": "model_resolver_summit:v0.1.0/on_enter_booth",
     "ticking_functions": {
-        "model_resolver_summit:tick_structure_room": "4t",
-        "model_resolver_summit:20tick": "20t",
-        "model_resolver_summit:loop_structure": "100t"
+        "model_resolver_summit:v0.1.0/tick_structure_room": "4t",
+        "model_resolver_summit:v0.1.0/20tick": "20t",
+        "model_resolver_summit:v0.1.0/loop_structure": "100t"
     },
     "balloons": [
         {

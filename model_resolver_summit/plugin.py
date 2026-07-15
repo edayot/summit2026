@@ -255,7 +255,7 @@ def beet_default(ctx: Context):
         ]
 
         commands = []
-        commands.append(f"data modify entity @n[tag=model_resolver_summit.structure.code, type=text_display, distance=..10] text set value {json.dumps(message_code)}")
+        commands.append(f"data modify entity @e[tag=model_resolver_summit.structure.code, type=text_display, distance=..10, limit=1] text set value {json.dumps(message_code)}")
 
         # un seul fichier texture pour les 4 vues de cette structure
         render_path = f"{NAMESPACE}:item/font/structure/{n}"
@@ -267,7 +267,7 @@ def beet_default(ctx: Context):
                 display_option=display_option,
             )
             commands.append(
-                f"data modify entity @n[tag=model_resolver_summit.structure.{suffix}, type=text_display, distance=..10] text set value "
+                f"data modify entity @e[tag=model_resolver_summit.structure.{suffix}, type=text_display, distance=..10, limit=1] text set value "
                 f"{json.dumps({'text': char, 'font': font_path, 'color': 'white'})}"
             )
 
@@ -293,7 +293,7 @@ def beet_default(ctx: Context):
 execute 
     if score #GLOBAL_STRUCTURE model_resolver_summit.math matches {n}
     positioned 203 88 -3
-    run function ~/place_structure_{n}:
+    run return run function ~/place_structure_{n}:
         place template {structure} {STRUCTURE_COOR} none none 1 0 strict
         {"\n        ".join(commands)}
 """)
@@ -475,8 +475,8 @@ def beet_default(ctx: Context):
             func.append(f"""
 execute 
     if score @s model_resolver_summit.current_display matches {i}  
-    run function ~/change_to_{i}:
-        execute as @e[tag=model_resolver_summit.screen.part, distance=..16] run function {res}
+    run return run function ~/change_to_{i}:
+        execute as @e[type=#model_resolver_summit:screen_part, tag=model_resolver_summit.screen.part, distance=..16] run function {res}
         execute on target run function {message_res}
         execute on attacker run function {message_res}
     """)

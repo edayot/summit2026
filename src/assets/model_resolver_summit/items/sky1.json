@@ -1,1 +1,1 @@
-{"model":{"type":"model","model":"model_resolver_summit:item/sky1"}}
+{"model":{"type":"model","model":"model_resolver_summit:item/sky1", "tints":[{"type":"minecraft:constant","value":66046}]}}
