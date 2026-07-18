@@ -15,6 +15,14 @@
                 "y": {"min": 81.0,  "max": 93.0},
                 "z": {"min": -19.0, "max": 4.0}
             }
+        },
+        "simpledrawer": {
+            "position": {
+                "x": {"min": 205.0, "max": 209.0},
+                "y": {"min": 92.0,  "max": 98.0},
+                "z": {"min": -22.0, "max": -17.0}
+            },
+            "on_player_enter": "model_resolver_summit:v0.1.0/give_sticker"
         }
     },
     "on_player_enter": "model_resolver_summit:v0.1.0/on_enter_booth",

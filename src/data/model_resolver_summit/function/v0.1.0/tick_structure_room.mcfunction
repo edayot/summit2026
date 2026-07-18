@@ -1,4 +1,4 @@
-schedule function ~/ 4t replace
+# schedule function ~/ 4t replace
 
 
 BLOCK_ON  = "minecraft:copper_bulb[lit=true]"

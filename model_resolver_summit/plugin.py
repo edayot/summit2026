@@ -178,7 +178,7 @@ def structure_generation_code(draft: Generator):
     STRUCTURE_COOR = "186 86 -6"
 
     func = draft.data.functions.setdefault(f"{NAMESPACE}:v0.1.0/loop_structure", Function("""
-schedule function ~/ 100t replace
+# schedule function ~/ 100t replace
 fill 186 86 -6 192 91 0 air strict
 """))
     n = 0
@@ -255,7 +255,7 @@ def beet_default(ctx: Context):
         ]
 
         commands = []
-        commands.append(f"data modify entity @e[tag=model_resolver_summit.structure.code, type=text_display, distance=..10, limit=1] text set value {json.dumps(message_code)}")
+        commands.append(f"data modify entity @e[type=text_display, tag=model_resolver_summit.structure.code, distance=..10, limit=1] text set value {json.dumps(message_code)}")
 
         # un seul fichier texture pour les 4 vues de cette structure
         render_path = f"{NAMESPACE}:item/font/structure/{n}"
@@ -267,7 +267,7 @@ def beet_default(ctx: Context):
                 display_option=display_option,
             )
             commands.append(
-                f"data modify entity @e[tag=model_resolver_summit.structure.{suffix}, type=text_display, distance=..10, limit=1] text set value "
+                f"data modify entity @e[type=text_display, tag=model_resolver_summit.structure.{suffix}, distance=..10, limit=1] text set value "
                 f"{json.dumps({'text': char, 'font': font_path, 'color': 'white'})}"
             )
 
